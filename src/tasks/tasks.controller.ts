@@ -12,14 +12,14 @@ export class TasksController {
 
     @ApiOperation({summary: 'Создать задачу'})
     @ApiResponse({status: 200, type: Task})
-    @Post('/')
+    @Post('/create')
     create(@Body() taskDto: TaskDto) {
         return this.tasksService.create(taskDto)
     }
 
     @ApiOperation({summary: 'Показать задачу'})
     @ApiResponse({status: 200, type: [Task]})
-    @Get('/')
+    @Get()
     get(@Body() taskDto: TaskDto) {
         return this.tasksService.get(taskDto)
     }

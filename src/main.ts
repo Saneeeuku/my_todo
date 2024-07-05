@@ -1,9 +1,8 @@
 import {NestFactory} from "@nestjs/core";
 import {AppModule} from "./app.module";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger"
-import {JwtAuthzGuard} from "./authz/jwtAuthz.guard";
-import {JwtService} from "@nestjs/jwt";
 import {ValidationPipe} from "./pipes/validation.pipe";
+
 
 async function start() {
   const PORT = process.env.PORT || 3000
@@ -17,11 +16,8 @@ async function start() {
   const documentation = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/todo/doc', app, documentation)
 
-  // const jwtService = app.get(JwtService);
-  // const jwtAuthzGuard = new JwtAuthzGuard(jwtService);
-  // app.useGlobalGuards(jwtAuthzGuard)
-
   app.useGlobalPipes(new ValidationPipe())
+  app.enableCors()
 
   try{
     await app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}...`))

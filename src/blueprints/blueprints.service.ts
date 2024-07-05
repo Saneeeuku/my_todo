@@ -3,20 +3,21 @@ import {BlueprintDto} from "./dto/blueprint.dto";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Blueprint} from "./blueprints.entity";
 import {Repository} from "typeorm";
-import {User} from "../users/users.entity";
+import {TokenUserDto} from "../users/dto/userDto";
 
 @Injectable()
 export class BlueprintsService {
 
     constructor(@InjectRepository(Blueprint) private blueprintRepository: Repository<Blueprint>) {
     }
-
-    async createBlueprint(user: User, dto: BlueprintDto) {
+    async createBlueprint(reqId: number, user: TokenUserDto, dto: BlueprintDto) {
+        await this.checkRights(reqId, user.id)
         const blueprint = this.blueprintRepository.create({...dto, user})
         await this.blueprintRepository.save(blueprint)
         return "Проект создан"
     }
-    async getAllBlueprints(user: User) {
+    async getAllBlueprints(reqId: number, user: TokenUserDto) {
+        await this.checkRights(reqId, user.id)
         const blueprints = await this.blueprintRepository.find({
             where: {
                 user: {
@@ -33,7 +34,8 @@ export class BlueprintsService {
         return blueprints
     }
 
-    async updateBlueprint(user: User, blueprintId, title: string, description: string) {
+    async updateBlueprint(reqId: number, user: TokenUserDto, blueprintId: number, title: string, description: string) {
+        await this.checkRights(reqId, user.id)
         const res = await this.blueprintRepository.createQueryBuilder('blueprint')
             .leftJoin('blueprint.user', 'user')
             .update()
@@ -46,7 +48,8 @@ export class BlueprintsService {
         return "Проект обновлён"
     }
 
-    async deleteBlueprint(user: User, blueprintId) {
+    async deleteBlueprint(reqId: number, user: TokenUserDto, blueprintId: number) {
+        await this.checkRights(reqId, user.id)
         const res = await this.blueprintRepository.createQueryBuilder('blueprint')
             .leftJoin('blueprint.user', 'user')
             .softDelete()
@@ -56,5 +59,10 @@ export class BlueprintsService {
             throw new HttpException('Ошибка при удалении', HttpStatus.BAD_REQUEST)
         }
         return "Проект удалён"
+    }
+    private async checkRights(reqId, loggedId){
+        if (String(reqId) !== String(loggedId)){
+            throw new HttpException('Нет доступа', HttpStatus.UNAUTHORIZED)
+        }
     }
 }

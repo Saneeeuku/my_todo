@@ -2,14 +2,15 @@ import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {User} from "./users.entity";
-import {UserDto} from "./dto/userDto";
+import {CreateUserDto, TokenUserDto} from "./dto/userDto";
+import * as bcrypt from 'bcryptjs'
 
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User) private userRepository: Repository<User>) {
     }
 
-    async createUser(dto: UserDto) {
+    async createUser(dto: CreateUserDto) {
         const user = this.userRepository.create(dto)
         await this.userRepository.save(user)
         return user
@@ -17,32 +18,27 @@ export class UsersService {
 
     async getAllUsers() {
         return await this.userRepository.find({
-            relations: {
-                blueprints: true
-            }
-        })
-    }
-
-    async getUser(dto: UserDto) {
-        const user = await this.userRepository.findOne({
-            where: {
-                email: dto.email,
-                password: dto.password
+            select: {
+                id: true,
+                email: true,
+                password: true
             },
             relations: {
                 blueprints: true
             }
         })
-        return user
     }
 
-    async getUserByEmail(email: string) {
-        const user = await this.userRepository.createQueryBuilder('user')
+    async getUser(reqId: number, logUser: TokenUserDto) {
+        if(Number(reqId) !== logUser.id){
+            throw new HttpException('Ошибка при получении', HttpStatus.BAD_REQUEST)
+        }
+        const res = await this.userRepository.createQueryBuilder('user')
             .leftJoinAndSelect("user.blueprints", "blueprints")
             .addSelect('user.password')
-            .where('user.email = :email', {email})
+            .where('user.email = :email',{email: logUser.email})
             .getOne();
-        return user
+        return res
     }
     async getUserByEmailPublic(email: string) {
         const user = await this.userRepository.findOne({
@@ -51,19 +47,41 @@ export class UsersService {
         })
         return user
     }
-
-    async updateUser(dto: UserDto) {
-        const user = this.getUser(dto)
-        if (typeof user !== "string") {
-            return await this.userRepository.save(dto)
-        }
+    async getUserForAutz(email: string) {
+        return await this.userRepository.createQueryBuilder('user')
+            .leftJoinAndSelect("user.blueprints", "blueprints")
+            .addSelect('user.password')
+            .where('user.email = :email', {email})
+            .getOne();
     }
 
-    async deleteUser(dto: UserDto) {
-        const result = await this.userRepository.delete(dto)
-        if (result.affected === 0) {
-            throw new HttpException('Пользователь не найден', HttpStatus.BAD_REQUEST)
+    async updateUser(reqId: number, user: TokenUserDto, email: string, password: string) {
+        if(Number(reqId) !== user.id){
+            throw new HttpException('Ошибка при обновлении', HttpStatus.BAD_REQUEST)
         }
-        return result
+        const hashPassword = await bcrypt.hash(password, 5)
+        const res = await this.userRepository.createQueryBuilder('user')
+            .update()
+            .set({email, password: hashPassword})
+            .where('id = :userId', {userId: user.id})
+            .execute()
+        if (res.affected === 0) {
+            throw new HttpException('Ошибка при обновлении', HttpStatus.BAD_REQUEST)
+        }
+        return "Инфорация пользователя обновлёна"
+    }
+
+    async deleteUser(reqId: number, logUser: TokenUserDto) {
+        if(Number(reqId) !== logUser.id){
+            throw new HttpException('Ошибка при удалении', HttpStatus.BAD_REQUEST)
+        }
+        const res = await this.userRepository.createQueryBuilder('user')
+            .restore()
+            .where('id = :userId', {userId: logUser.id})
+            .execute()
+        if (res.affected === 0) {
+            throw new HttpException('Ошибка при удалении', HttpStatus.BAD_REQUEST)
+        }
+        return "Пользователь удалён"
     }
 }

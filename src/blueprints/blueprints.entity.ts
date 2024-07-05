@@ -5,10 +5,11 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     DeleteDateColumn,
-    ManyToOne
+    ManyToOne, OneToMany
 } from "typeorm"
 import {ApiProperty} from "@nestjs/swagger";
 import {User} from "../users/users.entity";
+import {Task} from "../tasks/tasks.entity";
 
 @Entity('blueprints')
 export class Blueprint {
@@ -36,4 +37,8 @@ export class Blueprint {
 
     @ManyToOne(() => User, (user) => user.blueprints)
     user: User
+
+    @OneToMany(() => Task, (tasks) => tasks.blueprint)
+    tasks: Task[]
+
 }

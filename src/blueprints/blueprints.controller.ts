@@ -1,10 +1,8 @@
-import {Body, Controller, Delete, Get, Patch, Post, Query, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards} from '@nestjs/common';
 import {BlueprintDto} from './dto/blueprint.dto'
 import {ApiTags} from "@nestjs/swagger";
 import {BlueprintsService} from "./blueprints.service";
 import {JwtAuthzGuard} from "../authz/jwtAuthz.guard";
-import {User} from "../users/users.entity";
-import {UserDto} from "../users/dto/userDto";
 
 @ApiTags('Проекты пользователя')
 @Controller('blueprints')
@@ -13,32 +11,33 @@ export class BlueprintsController {
     }
 
     @UseGuards(JwtAuthzGuard)
-    @Post('/create')
-    createBlueprint(@Body() dto: BlueprintDto, @Req() req){
+    @Post('/create/:userId')
+    createBlueprint(@Param('userId') userId: number, @Body() dto: BlueprintDto, @Req() req){
         const user = req.user
-        return this.blueprintsService.createBlueprint(user,dto)
+        return this.blueprintsService.createBlueprint(userId,user,dto)
     }
     @UseGuards(JwtAuthzGuard)
-    @Get()
-    getAllBlueprints(@Req() req){
+    @Get(':id')
+    getAllBlueprints(@Param('id') id: number, @Req() req){
         const user = req.user
-        return this.blueprintsService.getAllBlueprints(user)
+        return this.blueprintsService.getAllBlueprints(id,user)
     }
 
     @UseGuards(JwtAuthzGuard)
-    @Patch('/update')
-    updateBlueprint(@Query('id') idBlueprint: number,
+    @Patch('/update/:userId')
+    updateBlueprint(@Param('userId') userId: number,
+                    @Query('id') blueprintId: number,
                     @Body() dataToUpdate: {title: string, description: string},
                     @Req() req){
         const user = req.user
-        return this.blueprintsService.updateBlueprint(user, idBlueprint,
+        return this.blueprintsService.updateBlueprint(userId, user, blueprintId,
             dataToUpdate.title, dataToUpdate.description)
     }
 
     @UseGuards(JwtAuthzGuard)
-    @Delete()
-    deleteBlueprint(@Query('id') idBlueprint: number, @Req() req){
+    @Delete('/:userId')
+    deleteBlueprint(@Param('userId') userId: number, @Query('id') idBlueprint: number, @Req() req){
         const user = req.user
-        return this.blueprintsService.deleteBlueprint(user, idBlueprint)
+        return this.blueprintsService.deleteBlueprint(userId, user, idBlueprint)
     }
 }

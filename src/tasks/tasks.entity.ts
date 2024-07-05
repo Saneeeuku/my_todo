@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne} from "typeorm"
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../users/users.entity";
+import {Blueprint} from "../blueprints/blueprints.entity";
 
 @Entity('tasks')
 export class Task {
@@ -26,6 +27,9 @@ export class Task {
     @DeleteDateColumn({type: 'timestamptz', select: false})
     deleted_at: Date;
 
-    // @ManyToOne(() => User, (user) => user.tasks)
-    // user:  User
+    @ManyToOne(() => User, (user) => user.tasks)
+    user:  User
+
+    @ManyToOne(() => Blueprint, (blueprint) => blueprint.tasks)
+    blueprint:  Blueprint
 }
