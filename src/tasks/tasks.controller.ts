@@ -34,7 +34,7 @@ export class TasksController {
         return this.tasksService.getTasksForBlueprint(userid, user, bpId)
     }
     @ApiOperation({summary: 'Обновить задачу'})
-    @ApiResponse({status: 200, type: [Task]})
+    @ApiResponse({status: 200, type: String})
     @Patch('/update/:userId/')
     @UseGuards(JwtAuthzGuard)
     updateTask(@Param('userId') userId: number,
@@ -44,8 +44,8 @@ export class TasksController {
         const user = req.user
         return this.tasksService.updateTask(userId, user, taskId, dataToUpdate)
     }
-    @ApiOperation({summary: 'Обновить задачу'})
-    @ApiResponse({status: 200, type: [Task]})
+    @ApiOperation({summary: 'Удалить задачу'})
+    @ApiResponse({status: 200, type: String})
     @Delete(':userId')
     @UseGuards(JwtAuthzGuard)
     deleteTask(@Param('userId') userId: number,

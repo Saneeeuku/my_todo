@@ -28,6 +28,7 @@ export class UsersController {
     }
 
     @ApiOperation({summary: 'Показать пользователя', description: 'Только для авторизированных пользователей'})
+    @ApiResponse({status: 200, type: User})
     @Get(':userId')
     @UseGuards(JwtAuthzGuard)
     getUser(@Param('userId') reqId: number, @Req() req) {
@@ -36,6 +37,7 @@ export class UsersController {
     }
 
     @ApiOperation({summary: 'Обновить данные пользователя', description: 'Только для авторизированных пользователей'})
+    @ApiResponse({status: 200, type: String})
     @Patch(':userId')
     @UseGuards(JwtAuthzGuard)
     updateUser(@Body() dataToUpdate: UpdateUserDto,
@@ -47,7 +49,7 @@ export class UsersController {
     }
 
     @ApiOperation({summary: 'Удалить пользователя', description: 'Только для авторизированных пользователей'})
-    @ApiResponse({status: 200, type: [User]})
+    @ApiResponse({status: 200, type: String})
     @Delete(':userId')
     @UseGuards(JwtAuthzGuard)
     deleteUser(@Param('userId') userId: number, @Req() req) {
