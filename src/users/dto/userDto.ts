@@ -1,7 +1,6 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {PartialType} from "@nestjs/mapped-types";
 import {IsString, Length, IsEmail, IsNumber} from 'class-validator'
-//import {Type} from 'class-transformer'
 
 export class CreateUserDto {
     @ApiProperty({example: 'qwerty@gmail.com', description: 'Электронная почта'})
@@ -11,7 +10,7 @@ export class CreateUserDto {
 
     @ApiProperty({example: 'strongest_password', description: 'Пароль'})
     @IsString({message: 'Необходима строка'})
-    @Length(4, 15, {message: 'Пароль должены быть длиной 4-15 символов'})
+    @Length(4, 50, {message: 'Пароль должены быть длиной не менее 4 символов'})
     readonly password: string;
 }
 export class UpdateUserDto extends PartialType(CreateUserDto){}

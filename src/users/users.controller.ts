@@ -21,36 +21,36 @@ export class UsersController {
 
     @ApiOperation({summary: 'Показать всех пользователей (dev only)'})
     @ApiResponse({status: 200, type: [User]})
-    @UseGuards(JwtAuthzGuard)
     @Get()
+    @UseGuards(JwtAuthzGuard)
     getAllUser(@Req() req) {
         return this.usersService.getAllUsers()
     }
 
-    @ApiOperation({summary: 'Показать пользователя по почте, с паролем'})
-    @UseGuards(JwtAuthzGuard)
+    @ApiOperation({summary: 'Показать пользователя', description: 'Только для авторизированных пользователей'})
     @Get(':userId')
+    @UseGuards(JwtAuthzGuard)
     getUser(@Param('userId') reqId: number, @Req() req) {
         const user = req.user
         return this.usersService.getUser(reqId, user)
     }
 
-    @ApiOperation({summary: 'Обновить данные пользователя'})
-    @UseGuards(JwtAuthzGuard)
+    @ApiOperation({summary: 'Обновить данные пользователя', description: 'Только для авторизированных пользователей'})
     @Patch(':userId')
+    @UseGuards(JwtAuthzGuard)
     updateUser(@Body() dataToUpdate: UpdateUserDto,
                @Param('userId') reqId: number,
                @Req() req) {
         const user = req.user
-        return this.usersService.updateUser(reqId,user, dataToUpdate.email, dataToUpdate.password)
+        return this.usersService.updateUser(reqId,user,
+            dataToUpdate.email, dataToUpdate.password)
     }
 
-    @ApiOperation({summary: 'Удалить пользователя по почте и паролю'})
+    @ApiOperation({summary: 'Удалить пользователя', description: 'Только для авторизированных пользователей'})
     @ApiResponse({status: 200, type: [User]})
-    @UseGuards(JwtAuthzGuard)
     @Delete(':userId')
-    deleteUser(@Param('userId') userId: number,
-               @Req() req) {
+    @UseGuards(JwtAuthzGuard)
+    deleteUser(@Param('userId') userId: number, @Req() req) {
         const user = req.user
         return this.usersService.deleteUser(userId, user)
     }

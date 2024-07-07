@@ -11,7 +11,6 @@ import {ApiProperty} from "@nestjs/swagger";
 import {Blueprint} from "../blueprints/blueprints.entity";
 import {Task} from "../tasks/tasks.entity";
 
-
 @Entity('users')
 export class User {
     @ApiProperty({example: '123', description: 'Уникальный ID'})
@@ -37,13 +36,11 @@ export class User {
     deleted_at: Date;
 
     @OneToMany(() => Blueprint, (blueprint) => blueprint.user,
-        {onUpdate: 'CASCADE', onDelete: 'CASCADE'}
+        {cascade: ['remove']}
     )
     blueprints: Blueprint[]
 
     @OneToMany(() => Task, (task) => task.user,
-        {onUpdate: 'CASCADE', onDelete: 'CASCADE'}
-    )
+        {cascade: ['remove']})
     tasks: Task[]
-
 }

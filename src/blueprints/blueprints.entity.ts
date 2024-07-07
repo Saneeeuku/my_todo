@@ -35,10 +35,11 @@ export class Blueprint {
     @DeleteDateColumn({type: 'timestamptz', select: false})
     deleted_at: Date;
 
-    @ManyToOne(() => User, (user) => user.blueprints)
+    @ManyToOne(() => User, (user) => user.blueprints,
+        {onDelete: 'CASCADE', orphanedRowAction: 'delete'})
     user: User
 
-    @OneToMany(() => Task, (tasks) => tasks.blueprint)
+    @OneToMany(() => Task, (tasks) => tasks.blueprint,
+        {cascade: ['remove']})
     tasks: Task[]
-
 }

@@ -24,7 +24,9 @@ export class UsersService {
                 password: true
             },
             relations: {
-                blueprints: true
+                blueprints: {
+                    tasks: true
+                }
             }
         })
     }
@@ -35,6 +37,7 @@ export class UsersService {
         }
         const res = await this.userRepository.createQueryBuilder('user')
             .leftJoinAndSelect("user.blueprints", "blueprints")
+            .leftJoinAndSelect('blueprints.tasks', 'tasks')
             .addSelect('user.password')
             .where('user.email = :email',{email: logUser.email})
             .getOne();
@@ -76,7 +79,7 @@ export class UsersService {
             throw new HttpException('Ошибка при удалении', HttpStatus.BAD_REQUEST)
         }
         const res = await this.userRepository.createQueryBuilder('user')
-            .restore()
+            .delete()
             .where('id = :userId', {userId: logUser.id})
             .execute()
         if (res.affected === 0) {
