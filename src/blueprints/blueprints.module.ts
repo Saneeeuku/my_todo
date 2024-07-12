@@ -3,7 +3,7 @@ import {BlueprintsController} from './blueprints.controller';
 import {BlueprintsService} from './blueprints.service';
 import {User} from "../users/users.entity";
 import {Blueprint} from "./blueprints.entity";
-import {Task} from "../tasks/tasks.entity";
+import {Task} from "../tasks/task.entity";
 import {AuthzModule} from "../authz/authz.module";
 import {TypeOrmModule} from "@nestjs/typeorm";
 

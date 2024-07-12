@@ -3,7 +3,7 @@ import {BlueprintDto, UpdateBlueprintDto} from "./dto/blueprint.dto";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Blueprint} from "./blueprints.entity";
 import {Repository} from "typeorm";
-import {TokenUserDto} from "../users/dto/userDto";
+import {TokenUserDto} from "../users/dto/user.dto";
 
 @Injectable()
 export class BlueprintsService {
@@ -34,7 +34,9 @@ export class BlueprintsService {
             },
             relations: {
                 user: true,
-                tasks: true
+                tasksProgress: {
+                    tasks: true
+                }
             }
         })
         if (blueprints.length === 0) {

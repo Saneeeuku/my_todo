@@ -9,7 +9,8 @@ import {
 } from "typeorm"
 import {ApiProperty} from "@nestjs/swagger";
 import {User} from "../users/users.entity";
-import {Task} from "../tasks/tasks.entity";
+import {Task} from "../tasks/task.entity";
+import {TasksProgress} from "../tasks/tasks.progress/tasks.progress.entity";
 
 @Entity('blueprints')
 export class Blueprint {
@@ -38,6 +39,10 @@ export class Blueprint {
     @ManyToOne(() => User, (user) => user.blueprints,
         {onDelete: 'CASCADE', orphanedRowAction: 'delete'})
     user: User
+
+    @OneToMany(() => TasksProgress, (tProgress) => tProgress.blueprint,
+        {cascade: ['remove']})
+    tasksProgress: TasksProgress[]
 
     @OneToMany(() => Task, (tasks) => tasks.blueprint,
         {cascade: ['remove']})

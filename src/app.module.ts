@@ -3,11 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { User } from "./users/users.entity";
-import { TasksModule } from './tasks/tasks.module';
-import { Task } from "./tasks/tasks.entity";
+import { TaskModule } from './tasks/task.module';
+import { Task } from "./tasks/task.entity";
 import { AuthzModule } from './authz/authz.module';
 import { BlueprintsModule } from './blueprints/blueprints.module';
 import {Blueprint} from "./blueprints/blueprints.entity";
+import {TasksProgress} from "./tasks/tasks.progress/tasks.progress.entity";
+import {TasksProgressModule} from "./tasks/tasks.progress/tasks.progress.module";
 
 @Module({
     controllers: [],
@@ -23,14 +25,15 @@ import {Blueprint} from "./blueprints/blueprints.entity";
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DATABASE,
-            entities: [User, Blueprint, Task],
+            entities: [User, Blueprint, Task, TasksProgress],
             synchronize: Boolean(process.env.POSTGRES_SYNC),
             autoLoadEntities: true,
         }),
         UsersModule,
-        TasksModule,
+        TaskModule,
         AuthzModule,
         BlueprintsModule,
+        TasksProgressModule
     ]
 })
 export class AppModule {}
