@@ -2,7 +2,7 @@ import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {User} from "./users.entity";
-import {CreateUserDto, TokenUserDto} from "./dto/userDto";
+import {UserDto, TokenUserDto} from "./dto/user.dto";
 import * as bcrypt from 'bcryptjs'
 
 @Injectable()
@@ -10,7 +10,7 @@ export class UsersService {
     constructor(@InjectRepository(User) private userRepository: Repository<User>) {
     }
 
-    async createUser(dto: CreateUserDto) {
+    async createUser(dto: UserDto) {
         const user = this.userRepository.create(dto)
         await this.userRepository.save(user)
         return user
@@ -25,7 +25,9 @@ export class UsersService {
             },
             relations: {
                 blueprints: {
-                    tasks: true
+                    tasksProgress: {
+                        tasks: true
+                    }
                 }
             }
         })
@@ -37,7 +39,8 @@ export class UsersService {
         }
         const res = await this.userRepository.createQueryBuilder('user')
             .leftJoinAndSelect("user.blueprints", "blueprints")
-            .leftJoinAndSelect('blueprints.tasks', 'tasks')
+            .leftJoinAndSelect('blueprints.taskProgress', 'tProgress')
+            .leftJoinAndSelect('tProgress.tasks', 'tasks')
             .addSelect('user.password')
             .where('user.email = :email',{email: logUser.email})
             .getOne();

@@ -1,5 +1,5 @@
 import {Body, Controller, Delete, Get, Param, Patch, Req, UseGuards} from '@nestjs/common';
-import {UpdateUserDto} from './dto/userDto'
+import {UpdateUserDto} from './dto/user.dto'
 import {UsersService} from "./users.service";
 import {ApiTags, ApiOperation, ApiResponse} from "@nestjs/swagger"
 import {User} from "./users.entity";
@@ -11,19 +11,11 @@ export class UsersController {
     constructor(private usersService: UsersService) {
     }
 
-    // @ApiOperation({summary: 'Регистрация пользователя'})
-    // @ApiResponse({status: 200, type: User})
-    // @UseGuards(JwtAuthzGuard)
-    // @Post('/users')
-    // createUser(@Body() userDto: UserDto) {
-    //     return this.usersService.createUser(userDto)
-    // }
-
     @ApiOperation({summary: 'Показать всех пользователей (dev only)'})
     @ApiResponse({status: 200, type: [User]})
     @Get()
     @UseGuards(JwtAuthzGuard)
-    getAllUser(@Req() req) {
+    getAll(@Req() req) {
         return this.usersService.getAllUsers()
     }
 
@@ -31,7 +23,7 @@ export class UsersController {
     @ApiResponse({status: 200, type: User})
     @Get(':userId')
     @UseGuards(JwtAuthzGuard)
-    getUser(@Param('userId') reqId: number, @Req() req) {
+    getOne(@Param('userId') reqId: number, @Req() req) {
         const user = req.user
         return this.usersService.getUser(reqId, user)
     }
@@ -40,9 +32,9 @@ export class UsersController {
     @ApiResponse({status: 200, type: String})
     @Patch(':userId')
     @UseGuards(JwtAuthzGuard)
-    updateUser(@Body() dataToUpdate: UpdateUserDto,
-               @Param('userId') reqId: number,
-               @Req() req) {
+    update(@Body() dataToUpdate: UpdateUserDto,
+           @Param('userId') reqId: number,
+           @Req() req) {
         const user = req.user
         return this.usersService.updateUser(reqId,user,
             dataToUpdate.email, dataToUpdate.password)
@@ -52,7 +44,7 @@ export class UsersController {
     @ApiResponse({status: 200, type: String})
     @Delete(':userId')
     @UseGuards(JwtAuthzGuard)
-    deleteUser(@Param('userId') userId: number, @Req() req) {
+    delete(@Param('userId') userId: number, @Req() req) {
         const user = req.user
         return this.usersService.deleteUser(userId, user)
     }

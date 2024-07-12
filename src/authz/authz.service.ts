@@ -1,5 +1,5 @@
 import {HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
-import {CreateUserDto} from "../users/dto/userDto";
+import {UserDto} from "../users/dto/user.dto";
 import {UsersService} from "../users/users.service";
 import {JwtService} from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs'
@@ -10,7 +10,7 @@ export class AuthzService {
     constructor(private userService: UsersService, private jwtService: JwtService) {
     }
 
-    async register(userDto: CreateUserDto) {
+    async register(userDto: UserDto) {
         const tempUser = await this.userService.getUserForAutz(userDto.email)
         if (tempUser) {
             throw new HttpException('Пользователь с таким email уже существует',
@@ -25,7 +25,7 @@ export class AuthzService {
                 HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-    async login(userDto: CreateUserDto) {
+    async login(userDto: UserDto) {
         const tempUser = await this.validateUser(userDto)
         return this.generateToken(tempUser)
     }
@@ -35,7 +35,7 @@ export class AuthzService {
         return {token: this.jwtService.sign(payload)}
     }
 
-    private async validateUser(userDto: CreateUserDto) {
+    private async validateUser(userDto: UserDto) {
         const user = await this.userService.getUserForAutz(userDto.email)
         try {
             const isEqualPass = await bcrypt.compare(userDto.password, user.password)
