@@ -13,7 +13,7 @@ export class TaskDto {
     @MinLength(1, {message: 'Поле не может быть пустым'})
     readonly description!: string;
 
-    @ApiProperty({example: '1', description: 'Позиция столбца прогресса'})
+    @ApiProperty({example: '1', description: 'Позиция в столбце прогресса'})
     @IsNumber({}, {message: "Необходимо число."})
     readonly position!: number;
 }

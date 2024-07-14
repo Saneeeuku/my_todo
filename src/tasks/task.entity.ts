@@ -26,7 +26,7 @@ export class Task {
     @Column({nullable: false})
     description!: string;
 
-    @ApiProperty({example: '1', description: 'Позиция задачи в столбце прогресса'})
+    @ApiProperty({example: '1', description: 'Позиция в столбце прогресса'})
     @Column({nullable: false})
     position!: number;
 
