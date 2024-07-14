@@ -37,6 +37,14 @@ export class BlueprintsService {
                 tasksProgress: {
                     tasks: true
                 }
+            },
+            order: {
+                tasksProgress: {
+                    position: 'ASC',
+                    tasks: {
+                        position: 'ASC'
+                    }
+                }
             }
         })
         if (blueprints.length === 0) {

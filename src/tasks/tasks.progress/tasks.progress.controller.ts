@@ -1,7 +1,6 @@
 import {Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {TasksProgressService} from "./tasks.progress.service";
-import {Task} from "../task.entity";
 import {TasksProgress} from "./tasks.progress.entity";
 import {JwtAuthzGuard} from "../../authz/jwtAuthz.guard";
 import {TasksProgressDto, UpdTasksProgressDto} from "../dto/tasks.progress.dto";
@@ -54,5 +53,17 @@ export class TasksProgressController {
            @Req() req) {
         const user = req.user
         return this.tasksProgressService.deleteTasksProgress(userId,user, taskProgressId)
+    }
+
+    @ApiOperation({summary: 'Поменять позицию столбцов прогресса'})
+    @ApiResponse({status: 200, type: String})
+    @Patch('/update/:userId/:tProgressId1')
+    @UseGuards(JwtAuthzGuard)
+    switchPos(@Param('userId') userId: number,
+              @Param('tProgressId1') tProgressId1: number,
+              @Query('id') tProgressId2: number,
+              @Req() req) {
+        const user = req.user
+        return this.tasksProgressService.switchTasksProgressPositions(userId,tProgressId1, tProgressId2, user)
     }
 }

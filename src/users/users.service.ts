@@ -38,11 +38,12 @@ export class UsersService {
             throw new HttpException('Ошибка при получении', HttpStatus.BAD_REQUEST)
         }
         const res = await this.userRepository.createQueryBuilder('user')
-            .leftJoinAndSelect("user.blueprints", "blueprints")
-            .leftJoinAndSelect('blueprints.taskProgress', 'tProgress')
+            .leftJoinAndSelect('user.blueprints', 'blueprints')
+            .leftJoinAndSelect('blueprints.tasksProgress', 'tProgress')
             .leftJoinAndSelect('tProgress.tasks', 'tasks')
             .addSelect('user.password')
             .where('user.email = :email',{email: logUser.email})
+            .orderBy('tProgress.position', 'ASC')
             .getOne();
         return res
     }
