@@ -23,7 +23,7 @@ export class TaskService {
             .andWhere('task.userId = :userId', {userId: user.id})
             .andWhere('task.blueprintId = :bpId', {bpId: reqBpId})
             .andWhere('progress.id = :tpId', {tpId: reqTProgressId})
-            .orWhere('task.position = :pos', {pos: taskDto.position})
+            .andWhere('task.position = :pos', {pos: taskDto.position})
             .getOne()
         if (temp && (temp.title === taskDto.title || temp.position === taskDto.position)) {
             throw new HttpException('Задача с таким названием или позицией уже сущесвует', HttpStatus.BAD_REQUEST)

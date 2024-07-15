@@ -6,7 +6,6 @@ import {Blueprint} from "../../blueprints/blueprints.entity";
 import {TasksProgressDto, UpdTasksProgressDto} from "../dto/tasks.progress.dto";
 import {TasksProgress} from "./tasks.progress.entity";
 
-
 @Injectable()
 export class TasksProgressService {
     constructor(@InjectRepository(TasksProgress) private tasksProgressRepository: Repository<TasksProgress>,
@@ -19,7 +18,7 @@ export class TasksProgressService {
             .where('title = :title', {title: taskProgressDto.title})
             .andWhere('taskProgress.userId = :userId', {userId: user.id})
             .andWhere('taskProgress.blueprintId = :bpId', {bpId: reqBpId})
-            .orWhere('taskProgress.position = :pos', {pos: taskProgressDto.position})
+            .andWhere('taskProgress.position = :pos', {pos: taskProgressDto.position})
             .getOne()
         if (temp && (temp.title === taskProgressDto.title || temp.position === taskProgressDto.position)) {
             throw new HttpException('Столбец прогресса с таким названием или позицией уже сущесвует', HttpStatus.BAD_REQUEST)
