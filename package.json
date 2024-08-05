@@ -10,6 +10,7 @@
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "cross-env NODE_ENV=dev nest start --watch",
+    "start:dev:authen": "cross-env NODE_ENV=dev nest start authen --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/my_todo/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
