@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/my_todo/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/my_todo/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/my_todo",
+  "projects": {
+    "my_todo": {
+      "type": "application",
+      "root": "apps/my_todo",
+      "entryFile": "main",
+      "sourceRoot": "apps/my_todo/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/my_todo/tsconfig.app.json"
+      }
+    },
+    "authen": {
+      "type": "application",
+      "root": "apps/authen",
+      "entryFile": "main",
+      "sourceRoot": "apps/authen/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/authen/tsconfig.app.json"
+      }
+    }
   }
 }
